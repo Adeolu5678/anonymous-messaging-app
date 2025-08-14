@@ -1,35 +1,6 @@
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
 import { claimUsernameAction } from "./actions";
 
-const usernameSchema = z
-	.string()
-	.min(3)
-	.max(20)
-	.regex(/^[a-z0-9_]+$/);
-
-async function claimUsername(formData: FormData) {
-	"use server";
-	const { userId } = await auth();
-	if (!userId) redirect("/sign-in");
-
-	const raw = (formData.get("username") as string | null) ?? "";
-	const parsed = usernameSchema.safeParse(raw.toLowerCase());
-	if (!parsed.success) {
-		redirect("/onboarding/claim-username?e=invalid");
-	}
-
-	const { error } = await supabaseAdmin
-		.from("profiles")
-		.update({ username: parsed.data })
-		.eq("id", userId);
-	if (error) {
-		redirect("/onboarding/claim-username?e=save");
-	}
-
-	revalidatePath("/dashboard");
-	redirect("/dashboard");
-}
-
 export default function Page() {
     return (
         <>
