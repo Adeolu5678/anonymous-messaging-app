@@ -1,9 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
-import { z } from "zod";
-import { supabaseAdmin } from "@/app/lib/supabaseAdmin";
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
+import { claimUsernameAction } from "./actions";
 
 const usernameSchema = z
 	.string()
@@ -46,7 +42,7 @@ export default function Page() {
                     <p className="text-sm text-gray-500 mb-6">
                         Pick a unique username to receive whispers at your URL.
                     </p>
-                    <form action={claimUsername} className="flex gap-2">
+                    <form action={claimUsernameAction} className="flex gap-2">
                         <input
                             name="username"
                             required
