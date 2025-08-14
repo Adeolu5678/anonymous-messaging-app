@@ -17,13 +17,17 @@ async function claimUsername(formData: FormData) {
 
 	const raw = (formData.get("username") as string | null) ?? "";
 	const parsed = usernameSchema.safeParse(raw.toLowerCase());
-	if (!parsed.success) return { ok: false, error: "Invalid username" } as const;
+	if (!parsed.success) {
+		redirect("/onboarding/claim-username?e=invalid");
+	}
 
 	const { error } = await supabaseAdmin
 		.from("profiles")
 		.update({ username: parsed.data })
 		.eq("id", userId);
-	if (error) return { ok: false, error: error.message } as const;
+	if (error) {
+		redirect("/onboarding/claim-username?e=save");
+	}
 
 	revalidatePath("/dashboard");
 	redirect("/dashboard");
