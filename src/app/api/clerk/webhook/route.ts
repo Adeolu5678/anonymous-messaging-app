@@ -39,7 +39,7 @@ function deriveDisplayName(user: ClerkUser): string {
 
 export async function POST(req: Request) {
 	const body = await req.text();
-	const h = headers();
+	const h = await headers();
 	const svix_id = h.get("svix-id");
 	const svix_timestamp = h.get("svix-timestamp");
 	const svix_signature = h.get("svix-signature");
