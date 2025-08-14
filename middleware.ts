@@ -9,10 +9,9 @@ const isPublicRoute = createRouteMatcher([
 	"/api/username/check",
 ]);
 
-export default clerkMiddleware((auth, req) => {
-	if (isPublicRoute(req)) return;
-	// Use Promise pattern to satisfy TS typings in Clerk v6
-	return auth().then(({ protect }) => protect());
+export default clerkMiddleware(async (auth, req) => {
+    if (isPublicRoute(req)) return;
+    await auth.protect();
 });
 
 export const config = {
