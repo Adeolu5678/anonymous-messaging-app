@@ -2,7 +2,7 @@ import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { supabase } from "@/app/lib/supabaseClient";
+import { supabaseAdmin } from "@/app/lib/supabaseAdmin";
 
 const usernameSchema = z
 	.string()
@@ -12,14 +12,14 @@ const usernameSchema = z
 
 async function claimUsername(formData: FormData) {
 	"use server";
-	const { userId } = auth();
+	const { userId } = await auth();
 	if (!userId) redirect("/sign-in");
 
 	const raw = (formData.get("username") as string | null) ?? "";
 	const parsed = usernameSchema.safeParse(raw.toLowerCase());
 	if (!parsed.success) return { ok: false, error: "Invalid username" } as const;
 
-	const { error } = await supabase
+	const { error } = await supabaseAdmin
 		.from("profiles")
 		.update({ username: parsed.data })
 		.eq("id", userId);
