@@ -1,5 +1,7 @@
 import { SignedIn, SignedOut, RedirectToSignIn } from "@clerk/nextjs";
-import { claimUsernameAction } from "./actions";
+async function submit(formData: FormData) {
+    "use server";
+}
 
 export default function Page() {
     return (
@@ -13,7 +15,15 @@ export default function Page() {
                     <p className="text-sm text-gray-500 mb-6">
                         Pick a unique username to receive whispers at your URL.
                     </p>
-                    <form action={claimUsernameAction} className="flex gap-2">
+                    <form className="flex gap-2" action={async (formData: FormData) => {
+                        "use server";
+                        const username = (formData.get("username") as string | null)?.toLowerCase() || "";
+                        await fetch("/api/onboarding/claim-username", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ username }),
+                        });
+                    }}>
                         <input
                             name="username"
                             required
